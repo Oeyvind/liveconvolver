@@ -1,6 +1,6 @@
-# liveconvolver
-A Cabbage plugin wrapping a Csound instrument basaed around the liveconvolver opcode.
-Its intended use is to do convolution of two live sources. IR updates can be triggered in various ways.
+# liveconvolver and tvconv
+Cabbage plugins wrapping a Csound instrument based around the liveconvolver and tvconv opcodes.
+The intended use is to do convolution of two live sources. IR updates can be triggered in various ways.
 
 To run:
 Compile as a VST, using the latest version of Cabbage (Win/OSX/Linux)

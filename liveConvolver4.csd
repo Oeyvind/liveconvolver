@@ -1,6 +1,6 @@
 <Cabbage>
-form size(520, 450), caption("LiveConvolver4"), pluginID("li4x")
-image bounds(0, -1, 520, 451), shape("sharp"),  colour(8, 28, 38, 255), 
+form size(520, 350), caption("LiveConvolver4"), pluginID("li47")
+image bounds(0, 0, 520, 463), shape("sharp"),  colour(8, 28, 38, 255), 
 
 rslider channel("inputVolume"), bounds(16, 20, 70, 70), text("inVolume"), range(0, 1, 1, 0.5, 0.001)
 checkbox channel("inputSwitch"), bounds(108, 20, 20, 20), colour:0("green"), colour:1("red"), value(0)
@@ -16,15 +16,17 @@ rslider channel("hpFreq"), bounds(180, 20, 70, 70), text("hpFreq"), range(20, 20
 rslider bounds(256, 20, 7, 7), text("Freq0"), channel("lpFreq0"), range(0, 1, 0.95) 
 rslider channel("lpFreq"), bounds(256, 20, 70, 70), text("lpFreq"), range(20, 20000, 14000, 0.35)
 rslider channel("outVolume"), bounds(408, 20, 70, 70), text("outVolume"), range(0, 1, 0.9, 0.5, 0.001)
-rslider channel("f.shift"), bounds(332, 20, 70, 70), text("f_shift"), range(0.0, 50.0, 1.2, 0.35, 0.001)
+rslider channel("f_shift"), bounds(332, 20, 70, 70), text("f_shift"), range(0.0, 50.0, 1.2, 0.35, 0.001)
 
 checkbox bounds(28, 104, 35, 40), channel("IR_record"), colour:0(0,142,0),  colour:1(142, 0, 0)
 label bounds(20, 148, 65, 13), text("IR record"),  
 label text("p.length"), bounds(411, 152, 63, 13)
 combobox channel("partitionlength"), bounds(414, 137, 56, 15), items("256", "512", "1024", "2048", "4096"), channeltype("string"), value(4)
-csoundoutput bounds(16, 320, 474, 114), text("Output")
+;csoundoutput bounds(16, 344, 474, 114), text("Output")
 
-button bounds(64, 116, 37, 18), channel("IR_rec_mode"), text("Man", "Auto"), colour:1(0,142,0),  colour:0(142, 0, 0)
+button bounds(64, 104, 38, 18), channel("IR_rec_mode"), text("Man", "Auto"), colour:1(0,142,0),  colour:0(142, 0, 0)
+button bounds(64, 126, 38, 17), channel("IR_trans_rec"), text("Tra0", "Tra1"), colour:1(0,142,0),  colour:0(142, 0, 0)
+
 rslider bounds(104, 96, 70, 70), channel("IR_update_rate"), range(0.1, 4, 1, 0.5, 0.001), text("IR u.rate"),  
 rslider bounds(180, 96, 70, 70), channel("IR_size"), range(0.1, 5.9, 1, 0.5, 0.001), text("IR size"),  
 rslider bounds(256, 96, 70, 70), channel("IR_dly"), range(0, 2.5, 0, 0.5, 0.001), text("IR dly"),  
@@ -33,35 +35,47 @@ checkbox bounds(394, 96, 8, 8), channel("IR_pitchquantize"), value(1), oncolour(
 button bounds(412, 98, 65, 22), channel("IR_direction"), text("Rev", "Fwd"), value(1), colour:0(142, 0, 0), colour:1(0,142,0)
 label bounds(411, 120, 64, 13), text("Direction"),  
 
+hslider bounds(18, 174, 90, 10), channel("low_transientThresh"), range(-60, 0, -40, 1),  colour(0,142,0), trackercolour(0,142,0), trackerthickness(0.9)
+hslider bounds(108, 174, 90, 10), channel("amp_transientThresh"), range(0, 20, 7, 1),  colour(0,142,0), trackercolour(0,142,0), trackerthickness(0.9)
+hslider bounds(198, 174, 90, 10), channel("amp_transientDoubleLimit"), range(0.01, 2, 0.5, 1, 0.01),  colour(0,142,0), trackercolour(0,142,0), trackerthickness(0.9)
+hslider bounds(288, 174, 90, 10), channel("amp_transientDecThresh"), range(0, 20, 7, 1),  colour(0,142,0), trackercolour(0,142,0), trackerthickness(0.9)
+hslider bounds(378, 174, 90, 10), channel("amp_transientDecTime"), range(0.1, 10, 3, 1),  colour(0,142,0), trackercolour(0,142,0), trackerthickness(0.9)
+label bounds(18, 194, 64, 10), text("noisefloor")
+label bounds(108, 194, 64, 10), text("trans thresh")  
+label bounds(198, 194, 64, 10), text("double limit")
+label bounds(288, 194, 64, 10), text("dec thresh")  
+label bounds(398, 194, 64, 10), text("dec time")  
+
+
 image bounds(-10, -10, 2, 20), colour("red"), widgetarray("inbuffer", 160)
-image bounds(84, 168, 3, 20), colour("red"), identchannel("input_record_pointer")
+image bounds(84, 193, 3, 20), colour("red"), identchannel("input_record_pointer")
 image bounds(-10, -10, 2, 20), colour("red"), identchannel("IR_record_pointer")
 image bounds(-10, -10, 2, 20), colour("red"), widgetarray("IR_contents", 160)
 
-;label bounds(24, 208, 27, 14), text("IR"), align("left"),  
-label bounds(24, 184, 41, 12), text("input"), align("left"),  
-checkbox bounds(23, 196, 15, 9), channel("Animation"), value(1), oncolour("ffff0000"),  colour(0, 128, 0, 255), 
+label bounds(24, 236, 27, 14), text("IR"), align("left"),  
+label bounds(24, 212, 41, 12), text("input"), align("left"),  
+checkbox bounds(23, 224, 15, 9), channel("Animation"), value(1), oncolour("ffff0000"),  colour(0, 128, 0, 255), 
  
-label bounds(56, 236, 126, 13), text("Amp"),  align("left ")   
-label bounds(208, 236, 125, 13), text("Freq"),  align("left ")
-label bounds(356, 236, 52, 13), text("Wave"), align("left ")  
-label bounds(424, 236, 46, 13), text("Parm"), align("left ")  
+label bounds(56, 264, 126, 13), text("Amp"),  align("left ")   
+label bounds(208, 264, 125, 13), text("Freq"),  align("left ")
+label bounds(356, 264, 52, 13), text("Wave"), align("left ")  
+label bounds(424, 264, 46, 13), text("Parm"), align("left ")  
 
-image bounds(16, 252, 456, 19), colour(255, 255, 255, 0), plant("GUIabst_11"){
+image bounds(16, 280, 456, 19), colour(255, 255, 255, 0), plant("GUIabst_11"){
 hslider bounds(39, 0, 147, 14), channel("LFO1_amp"), range(0, 1, 0, 1, 0.01),  colour(0, 40, 120), trackercolour(0, 40, 120), trackerthickness(0.9)
 hslider bounds(189, 0, 147, 14), channel("LFO1_freq"), range(0, 10, 1, 0.3, 0.01),  colour(0, 40, 120), trackercolour(0, 40, 120), trackerthickness(0.9)
 combobox bounds(333, 0, 60, 18), channel("LFO1_wave"), channeltype("float"), text("Sine, Tri, Sawu, Sawd, Square , Noise")
 combobox bounds(400, 0, 63, 18), channel("LFO1_destination"), channeltype("float"), text("inVol, outVol, hpFreq, lpFreq, f.shift, IR rec, IR u.rate, IR size, IR dly, IR pitch, IR dir")
 label bounds(0, 2, 37, 13), text("LFO1"), align("left"),  
 }
-image bounds(16, 272, 456, 19), colour(255, 255, 255, 0), plant("GUIabst_13"){
+image bounds(16, 300, 456, 19), colour(255, 255, 255, 0), plant("GUIabst_13"){
 hslider bounds(39, 0, 147, 14), channel("LFO2_amp"), range(0, 1, 0, 1, 0.01),  colour(0, 40, 120), trackercolour(0, 40, 120), trackerthickness(0.9)
 hslider bounds(189, 0, 147, 14), channel("LFO2_freq"), range(0, 10, 1, 0.3, 0.01),  colour(0, 40, 120), trackercolour(0, 40, 120), trackerthickness(0.9)
 combobox bounds(333, 0, 60, 18), channel("LFO2_wave"), channeltype("float"), text("Sine, Tri, Sawu, Sawd, Square , Noise")
 combobox bounds(400, 0, 62, 18), channel("LFO2_destination"), channeltype("float"), text("inVol, outVol, hpFreq, lpFreq, f.shift, IR rec, IR u.rate, IR size, IR dly, IR pitch, IR dir")
 label bounds(0, 2, 37, 13), text("LFO2"), align("left"),  
 }
-image bounds(16, 292, 456, 19), colour(255, 255, 255, 0), plant("GUIabst_15"){
+image bounds(16, 320, 456, 19), colour(255, 255, 255, 0), plant("GUIabst_15"){
 hslider bounds(39, 0, 146, 14), channel("LFO3_amp"), range(0, 1, 0, 1, 0.01),  colour(0, 40, 120), trackercolour(0, 40, 120), trackerthickness(0.9)
 hslider bounds(189, 0, 146, 14), channel("LFO3_freq"), range(0, 10, 1, 0.3, 0.01),  colour(0, 40, 120), trackercolour(0, 40, 120), trackerthickness(0.9)
 combobox bounds(333, 0, 60, 18), channel("LFO3_wave"), channeltype("float"), text("Sine, Tri, Sawu, Sawd, Square , Noise")  
@@ -127,19 +141,61 @@ opcode LFOO, k, S
         xout kLFO
         endop
 
+opcode TransientDetect, kk,kikkkk
+	kin, iresponse, ktthresh, klowThresh, kdecThresh, kdoubleLimit xin 
+        ;setksmps 32
+/*
+	iresponse	= 10 		; response time in milliseconds
+	ktthresh	= 6		; transient trig threshold 
+	klowThresh	= -60		; lower threshold for transient detection
+	kdoubleLimit	= 0.02		; minimum duration between events, (double trig limit)
+	kdecThresh	= 6		; retrig threshold, how much must the level decay from its local max before allowing new transient trig
+*/	
+	kinDel		delayk	kin, iresponse/1000		; delay with response time for comparision of levels
+	ktrig		= ((kin > kinDel + ktthresh) ? 1 : 0) 	; if current rms plus threshold is larger than previous rms, set trig signal to current rms
+	klowGate	= (kin < klowThresh? 0 : 1)		; gate to remove transient of low level signals
+	ktrig		= ktrig * klowGate			; activate gate on trig signal
+	ktransLev	init 0
+	ktransLev	samphold kin, 1-ktrig			; read amplitude at transient
+	
+	kreGate		init 1					; retrigger gate, to limit transient double trig before signal has decayed (decThresh) from its local max
+	ktrig		= ktrig*kreGate				; activate gate
+	kmaxAmp		init -99999
+	kmaxAmp		max kmaxAmp, kin			; find local max amp
+	kdiff		= kmaxAmp-kin				; how much the signal has decayed since its local max value
+	kreGate		limit kreGate-ktrig, 0, 1		; mute when trig detected
+	kreGate		= (kdiff > kdecThresh ? 1 : kreGate)	; re-enable gate when signal has decayed sufficiently 
+	kmaxAmp		= (kreGate == 1 ? -99999 : kmaxAmp)	; reset max amp gauge
+
+	; avoid closely spaced transient triggers (first trig priority)
+	kdouble		init 1
+	ktrig		= ktrig*kdouble
+	if ktrig > 0 then
+	reinit double
+	endif
+double:
+        idoubleLimit  = i(kdoubleLimit)	
+        idoubleLimit    limit idoubleLimit, 1/kr, 5
+        kdouble		linseg	0, idoubleLimit, 0, 0, 1, 1, 1
+	rireturn
+
+	xout ktrig, kdiff
+	endop
+
+
 ; control of updates from gui
         instr 1
 
-        ;Spartitionlen chnget "partitionlength"
-        ;kpartitionchanged changed Spartitionlen
-        ;if (strlenk(Spartitionlen)>0) && (kpartitionchanged>0) then
-        ;gkpartitionlen strtodk Spartitionlen 
-        ;endif
+        Spartitionlen chnget "partitionlength"
+        kpartitionchanged changed Spartitionlen
+        if (strlenk(Spartitionlen)>0) && (kpartitionchanged>0) then
+        gkpartitionlen strtodk Spartitionlen 
+        endif
 
-        ;if (kpartitionchanged>0) then
-        ;event "i", -14, 0, .1
-        ;event "i", 14, 0.1, -1
-        ;endif
+        if (kpartitionchanged>0) then
+        event "i", -14, 0, .1
+        event "i", 14, 0.1, -1
+        endif
 
         kpreroll chnget "IR_dly_mod"
         kdirection chnget "IR_direction_mod"
@@ -147,8 +203,19 @@ opcode LFOO, k, S
         krectrig trigger krecord, 0.5, 0
         if krectrig > 0 then
           event "i", 11, 0.0, giIR_maxlen_sec, kpreroll, kdirection  ; record new audio to IR buffer
-          event "i", 13, 0.0, 1                         ; update convolver IR
         endif
+        chnset krectrig, "conv_update"
+
+        ktrans_enable chnget "IR_trans_rec"
+        if ktrans_enable > 0 then
+          ktransient chnget "transient"
+          if ktransient > 0 then
+            kchunksize chnget "IR_size_mod" ; IR segment size
+            event "i", 11, 0.0, kchunksize, kpreroll, kdirection  ; record new audio to IR buffer
+          endif
+          chnset ktransient, "conv_update"
+        endif
+        
         kauto chnget "IR_rec_mode"
         kautotrig_on trigger kauto, 0.5, 0
         kautotrig_off trigger kauto, 0.5, 1
@@ -164,7 +231,7 @@ opcode LFOO, k, S
         if kndx <= ginumbars then 
         kndx += 1
         Schan sprintfk "inbuffer_ident%i", kndx
-        Sbounds sprintfk "bounds(%d, 185, 2, 10)", 20+(kndx*3)
+        Sbounds sprintfk "bounds(%d, 213, 2, 10)", 20+(kndx*3)
         Scolour GetColour kndx
         Sset sprintfk "%s, %s", Sbounds, Scolour
         chnset Sset, Schan
@@ -292,6 +359,20 @@ opcode LFOO, k, S
         if kbright > 0 then
         a1 rbjeq a1, 10000, 10, 0.5, 0.5, 12
         endif
+
+;analyze amplitude transients
+	iresponse	        = 10 			                ; response time in milliseconds
+	ktthresh	        chnget "amp_transientThresh"            ; transient trig threshold 
+	klowThresh	        chnget "low_transientThresh"            ; lower threshold for transient detection
+        kdoubleLimit            chnget "amp_transientDoubleLimit"       ; minimum duration between events, (double trig limit)
+        kdecThresh	        chnget "amp_transientDecThresh"         ; retrig threshold, how much must the level decay from its local max before allowing new transient trig
+	kAttack		        = 0.001				        ; envelope follower attack
+	kRelease                chnget "amp_transientDecTime"           ; envelope follower release
+	a_env		        follow2	a1, kAttack, kRelease	; envelope follower
+        k_env		        downsamp a_env	
+	ktransient, kdiff	TransientDetect dbfsamp(k_env), iresponse, ktthresh, klowThresh, kdecThresh, kdoubleLimit
+                                chnset ktransient, "transient"
+
         chnset a1*kamp, "live_IR_source"
         ;outch 1, a1
         endin
@@ -311,9 +392,9 @@ opcode LFOO, k, S
         kndx_prev init -1
         if (ktrig > 0) || (int(kndx) > kndx_prev) then
         Schan = "input_record_pointer"
-        Sbounds sprintfk "bounds(%d, 175, 3, 20)", 20+(kndx*3)
-        Scolour GetColour kndx
-        Sset sprintfk "%s, %s", Sbounds, Scolour
+        Sbounds sprintfk "bounds(%d, 203, 3, 20)", 20+(kndx*3)
+        ;Scolour GetColour kndx
+        Sset sprintfk "%s", Sbounds
         chnset Sset, Schan	
         kndx_prev = int(kndx)
         endif
@@ -330,8 +411,8 @@ opcode LFOO, k, S
         kpreroll chnget "IR_dly_mod" ; preroll (that is, delay of the IR in this case)
         if ktrig > 0 then 
           event "i", 11, 0.0, kchunksize, kpreroll, kdirection  ; record new audio to IR buffer
-          event "i", 13, 0.0, 1                                 ; update convolver IR
         endif
+        chnset ktrig, "conv_update"
         endin
 
 ; transfer from buffer to IR (record IR)
@@ -408,21 +489,17 @@ opcode LFOO, k, S
         kamp downsamp (amp*amp2)
         kIRndx = downsamp(andx_IR)*ginumbars
         kndx = downsamp(andx_source)*ginumbars
-        ;printk2 kndx
-        ;kndx init 0
-        ;kndx += kgui/2
-        ;kndx = (kndx > ginumbars ? ginumbars: kndx)
         kndx_prev init -1
         if (kgui > 0) || (int(kndx) > kndx_prev) then
         Schan = "IR_record_pointer"
-        Sbounds sprintfk "bounds(%d, 185, %d, %d)", 20+(kndx*3), 3*kamp, (kamp*20)
+        Sbounds sprintfk "bounds(%d, 213, %d, %d)", 20+(kndx*3), 3*kamp, (kamp*20)
         Scolour GetColour kndx
         Sset sprintfk "%s, %s", Sbounds, Scolour
         if  (kamp > 0) then 
         chnset Sset, Schan	
         endif
         ;if knumactive == inumactive then
-        Sscoreline sprintfk {{i 19 0 %f %i %i %f}}, 1/kr, kndx, kIRndx, kamp
+        Sscoreline sprintfk {{i 19 0 %f %i %i %f "%s"}}, 1/kr, kndx, kIRndx, kamp, Scolour
         scoreline Sscoreline, 1
         ;endif
         kndx_prev = int(kndx)
@@ -522,14 +599,10 @@ opcode LFOO, k, S
 	instr 19
 	i_in_ndx = p4
 	i_IR_ndx = p5
-	iamp =  p6
-        ired table i_in_ndx/ginumbars, giRed, 1
-        igreen table i_in_ndx/ginumbars, giGreen, 1
-        iblue table i_in_ndx/ginumbars, giBlue, 1
-        Scolour sprintf "colour(%d, %d, %d)", ired*255, igreen*255, iblue*255
-
+	iamp = p6
+	Scolour strget p7
         Schan sprintf "IR_contents_ident%d", i_IR_ndx
-        Sbounds sprintfk "bounds(%d, %d, 2, %d)", 20+(i_IR_ndx*3), 205+((1-iamp)*20), (iamp*20)+2
+        Sbounds sprintfk "bounds(%d, %d, 2, %d)", 20+(i_IR_ndx*3), 233+((1-iamp)*20), (iamp*20)+2
         Sset sprintf "%s, %s", Sbounds, Scolour
         chnset Sset, Schan	
 	endin
