@@ -21,7 +21,7 @@ rslider channel("f_shift"), bounds(332, 20, 70, 70), text("f_shift"), range(0.0,
 checkbox bounds(28, 104, 35, 40), channel("IR_record"), colour:0(0,142,0),  colour:1(142, 0, 0)
 label bounds(20, 148, 65, 13), text("IR record"),  
 label text("p.length"), bounds(411, 152, 63, 13)
-combobox channel("partitionlength"), bounds(414, 137, 56, 15), items("256", "512", "1024", "2048", "4096"), channeltype("string"), value(4)
+combobox channel("partitionlength"), bounds(414, 137, 56, 15), items("256", "512", "1024", "2048", "4096"), value(4)
 ;csoundoutput bounds(16, 344, 474, 114), text("Output")
 
 button bounds(64, 104, 38, 18), channel("IR_rec_mode"), text("Man", "Auto"), colour:1(0,142,0),  colour:0(142, 0, 0)
@@ -82,6 +82,7 @@ combobox bounds(333, 0, 60, 18), channel("LFO3_wave"), channeltype("float"), tex
 combobox bounds(400, 0, 62, 18), channel("LFO3_destination"), channeltype("float"), text("inVol, outVol, hpFreq, lpFreq, f.shift, IR rec, IR u.rate, IR size, IR dly, IR pitch, IR dir")
 label bounds(0, 2, 36, 13), text("LFO3"), align("left"),  
 }
+
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
@@ -186,11 +187,10 @@ double:
 ; control of updates from gui
         instr 1
 
-        Spartitionlen chnget "partitionlength"
-        kpartitionchanged changed Spartitionlen
-        if (strlenk(Spartitionlen)>0) && (kpartitionchanged>0) then
-        gkpartitionlen strtodk Spartitionlen 
-        endif
+        kPlengths[] fillarray 256, 512, 1024, 2048, 4096
+        kplen chnget "partitionlength"
+        kpartitionchanged changed kplen
+        gkpartitionlen = kPlengths[kplen]
 
         if (kpartitionchanged>0) then
         event "i", -14, 0, .1
