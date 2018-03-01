@@ -1,5 +1,5 @@
 <Cabbage>
-form size(520, 350), caption("LiveConvolver4"), pluginID("li47")
+form size(520, 380), caption("LiveConvolver4"), pluginID("li47")
 image bounds(0, 0, 520, 463), shape("sharp"),  colour(8, 28, 38, 255), 
 
 rslider channel("inputVolume"), bounds(16, 20, 70, 70), text("inVolume"), range(0, 1, 1, 0.5, 0.001)
@@ -22,10 +22,10 @@ checkbox bounds(28, 104, 35, 40), channel("IR_record"), colour:0(0,142,0),  colo
 label bounds(20, 148, 65, 13), text("IR record"),  
 label text("p.length"), bounds(411, 152, 63, 13)
 combobox channel("partitionlength"), bounds(414, 137, 56, 15), items("256", "512", "1024", "2048", "4096"), value(4)
-;csoundoutput bounds(16, 344, 474, 114), text("Output")
 
-button bounds(64, 104, 38, 18), channel("IR_rec_mode"), text("Man", "Auto"), colour:1(0,142,0),  colour:0(142, 0, 0)
-button bounds(64, 126, 38, 17), channel("IR_trans_rec"), text("Tra0", "Tra1"), colour:1(0,142,0),  colour:0(142, 0, 0)
+button bounds(64, 103, 38, 14), channel("Solomode"), text("Nosolo", "Solo"), colour:1(0,14,0),  colour:0(142, 0, 0)
+button bounds(64, 117, 38, 14), channel("IR_rec_mode"), text("Man", "Auto"), colour:1(0,142,0),  colour:0(142, 0, 0)
+button bounds(64, 131, 38, 14), channel("IR_trans_rec"), text("Tra0", "Tra1"), colour:1(0,142,0),  colour:0(142, 0, 0)
 
 rslider bounds(104, 96, 70, 70), channel("IR_update_rate"), range(0.1, 4, 1, 0.5, 0.001), text("IR u.rate"),  
 rslider bounds(180, 96, 70, 70), channel("IR_size"), range(0.1, 5.9, 1, 0.5, 0.001), text("IR size"),  
@@ -82,6 +82,10 @@ combobox bounds(333, 0, 60, 18), channel("LFO3_wave"), channeltype("float"), tex
 combobox bounds(400, 0, 62, 18), channel("LFO3_destination"), channeltype("float"), text("inVol, outVol, hpFreq, lpFreq, f.shift, IR rec, IR u.rate, IR size, IR dly, IR pitch, IR dir")
 label bounds(0, 2, 36, 13), text("LFO3"), align("left"),  
 }
+
+hslider channel("st.deltime"), bounds(16, 344, 180, 30), text("St.Deltime"), range(0.1, 20, 8)
+hslider channel("st.amount"), bounds(200, 344, 180, 30), text("StAmount"), range(0, 1, 0.7)
+;csoundoutput bounds(16, 374, 474, 190), text("Output")
 
 </Cabbage>
 <CsoundSynthesizer>
@@ -200,20 +204,47 @@ double:
         kpreroll chnget "IR_dly_mod"
         kdirection chnget "IR_direction_mod"
         krecord chnget "IR_record_mod"
+        ksolomode chnget "Solomode"
         krectrig trigger krecord, 0.5, 0
-        if krectrig > 0 then
-          event "i", 11, 0.0, giIR_maxlen_sec, kpreroll, kdirection  ; record new audio to IR buffer
-        endif
+        krectrig_off trigger krecord, 0.5, 1
+        ktimestart init 0
+        if ksolomode > 0 then 
+          if krectrig > 0 then
+            ktimestart times
+          elseif krectrig_off > 0 then 
+            ktimenow times
+            kpreroll = ktimenow-ktimestart
+            event "i", 11, 0.0, kpreroll, kpreroll, kdirection  ; record new audio to IR buffer
+          endif
+        chnset krectrig_off, "conv_update"
+        else
+          if krectrig > 0 then
+            event "i", 11, 0.0, giIR_maxlen_sec, kpreroll, kdirection  ; record new audio to IR buffer
+          endif
         chnset krectrig, "conv_update"
+        endif
 
         ktrans_enable chnget "IR_trans_rec"
         if ktrans_enable > 0 then
           ktransient chnget "transient"
-          if ktransient > 0 then
-            kchunksize chnget "IR_size_mod" ; IR segment size
-            event "i", 11, 0.0, kchunksize, kpreroll, kdirection  ; record new audio to IR buffer
+          kchunksize chnget "IR_size_mod" ; IR segment size
+          if ksolomode > 0 then 
+            if ktransient > 0 then
+              kpreroll = kchunksize
+              event "i", 11, kchunksize, kchunksize, kpreroll, kdirection  ; record new audio to IR buffer
+              reinit transdel
+            endif
+            transdel:
+            print i(kchunksize)
+            ktransdel delayk ktransient, i(kchunksize)
+            rireturn
+            chnset ktransdel, "conv_update"
+          else
+            if ktransient > 0 then
+              event "i", 11, 0.0, kchunksize, kpreroll, kdirection  ; record new audio to IR buffer
+            endif
+            chnset ktransient, "conv_update"
           endif
-          chnset ktransient, "conv_update"
         endif
         
         kauto chnget "IR_rec_mode"
@@ -548,6 +579,7 @@ double:
         ain chnget "conv_in"        
         iplen = i(gkpartitionlen)
         kupdate chnget "conv_update"
+        printk2 kupdate
         kclean = 0
         aconv liveconv ain, giIR_record, iplen, kupdate, kclean
                 
@@ -590,6 +622,18 @@ double:
 	aMod2		= aCos * aModSin
 	;aSum		= aMod1 + aMod2
 	aDiff		= aMod1 - aMod2
+	
+	; stereoizer
+	kdelt chnget "st.deltime"
+        adelt interp kdelt
+        kamt chnget "st.amount"
+        ;adelt = 10
+        aDiff = aDiff*0.6 ;prescale
+        adel vdelayx aDiff, adelt*0.001, 0.1, 4
+        aL = aDiff+(adel*kamt)
+        aR = aDiff-(adel*kamt)
+        outs aL, aR
+
         
         outs aDiff, aDiff
         endin
