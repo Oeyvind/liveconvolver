@@ -1,5 +1,5 @@
 <Cabbage>
-form size(520, 380), caption("LiveConvolver4"), pluginID("li47")
+form size(520, 381), caption("LiveConvolver4"), pluginID("li47")
 image bounds(0, 0, 520, 463), shape("sharp"),  colour(8, 28, 38, 255), 
 
 rslider channel("inputVolume"), bounds(16, 20, 70, 70), text("inVolume"), range(0, 1, 1, 0.5, 0.001)
